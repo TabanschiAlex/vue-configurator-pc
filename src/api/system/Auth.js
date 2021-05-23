@@ -10,7 +10,6 @@ export default class Auth extends APIModel {
       const response = await this.post('/login', payload)
 
       if (response.status === 401 || response.status === 422) {
-        console.log('da')
         return localStorage.clear()
       }
 
@@ -21,7 +20,7 @@ export default class Auth extends APIModel {
       return true
     } catch (e) {
       localStorage.clear()
-      console.log(e.message)
+      console.log(e)
     }
   }
 

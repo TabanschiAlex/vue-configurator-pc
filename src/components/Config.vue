@@ -11,11 +11,24 @@
         lg="3"
       >
         <v-select
-          :items="configList"
+          :items="selectorConfig"
+          v-model="configNum"
           filled
           label="Select config"
           dense
-        ></v-select>
+          @change="changeConfig"
+        >
+        </v-select>
+
+        <v-btn
+          width="100%"
+          @click="createConfig"
+        >
+          Add Config
+        </v-btn>
+
+        <br>
+        <br>
 
         <v-alert v-if="compatible === 'true'"
                  text
@@ -29,9 +42,10 @@
         >
           Components are not compatible, check socket or format compatibles!
         </v-alert>
-        <v-alert v-else
-                 text
-                 type="warning"
+        <v-alert
+          v-else
+          text
+          type="warning"
         >
           Not enough components for PC.
         </v-alert>
@@ -65,12 +79,12 @@
                     <img src="https://i.imgur.com/5Aqgz7o.jpg" width="150" height="150" alt="">
                   </div>
                   <div style="text-align: left">
-                    <p>{{ component.manufacturer }} {{ component.model }}</p>
+                    <p>{{ component[i].manufacturer }} {{ component[i].model }}</p>
                     Category: <a href="#" class="text-muted" data-abc="true">{{ component.category }}</a>
                     <br>
-                    <p class="mb-3">{{ component.description }}</p></div>
+                    <p class="mb-3">{{ component[i].description }}</p></div>
                   <div>
-                    <h3 class="mb-0 font-weight-semibold">${{ component.price }}</h3>
+                    <h3 class="mb-0 font-weight-semibold">${{ component[i].price }}</h3>
                     <v-btn
                       @click="deleteComponent(component)"
                       color="red"
@@ -101,26 +115,10 @@ export default {
         'psu', 'case', 'monitor',
         'keyboard', 'mouse'
       ],
-      cpu: undefined,
-      motherboard: undefined,
-      gpu: undefined,
-      ram: undefined,
-      rom: undefined,
-      psu: undefined,
-      case: undefined,
-      monitor: undefined,
-      keyboard: undefined,
-      mouse: undefined,
-      configList: [1, 2, 3],
-      selectedList: {
-        cpu: [{
-          manufacturer: 'intel',
-          model: 'core i3 10300',
-          category: 'cpu',
-          description: 'osdfgdsoghsoldgojsdgsgdods',
-          price: 200
-        }]
-      },
+      configNum: undefined,
+      configList: this.loadConfigs(),
+      selectorConfig: [],
+      selectedList: {},
       compatible: false
     }
   },
@@ -128,7 +126,28 @@ export default {
     deleteComponent (component) {
       console.log(component)
       component = ''
+    },
+    async createConfig () {
+      console.log(await this.$api.config.createConfig())
+    },
+    async loadConfigs () {
+      const configs = await this.$api.config.getConfigs()
+
+      for (const config of configs) {
+        this.selectorConfig.push(config.id)
+      }
+
+      this.configList = configs
+    },
+    changeConfig () {
+      console.log(this.configNum)
+      console.log(this.configList)
+      this.selectedList = this.configList[this.configList.map((o) => o.id).indexOf(this.configNum)]
+      console.log(this.selectedList)
     }
+  },
+  beforeRouteEnter: {
+
   }
 }
 </script>

@@ -3,7 +3,15 @@ import axios from 'axios'
 export default class APIModel {
   constructor (resourceUrl = '') {
     this.resourceUrl = resourceUrl
-    this.axios = axios.create({ baseURL: 'http://localhost/' })
+    this.axios = axios.create(
+      {
+        baseURL: 'http://localhost/',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
   }
 
   async get (url, params) {

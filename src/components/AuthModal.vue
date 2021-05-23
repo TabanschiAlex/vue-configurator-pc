@@ -143,7 +143,6 @@ export default {
     name: '',
     email: '',
     password: '',
-    select: null,
     items: [
       'Item 1',
       'Item 2',
@@ -156,15 +155,9 @@ export default {
     submit () {
       this.$refs.observer.validate()
     },
-    clear () {
-      this.name = ''
-      this.email = ''
-      this.select = null
-      this.checkbox = null
-      this.$refs.observer.reset()
-    },
     async loginReq () {
-      console.log(await this.$api.auth.login({ email: 'test', password: 'test' }))
+      console.log(this.password)
+      console.log(await this.$api.auth.login({ email: this.email, password: this.password }))
       this.token = localStorage.getItem('token')
       this.dialog = false
     },
