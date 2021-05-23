@@ -5,8 +5,12 @@ export default class Config extends APIModel {
     super('configurator')
   }
 
-  async getConfigs (payload) {
-    return await this.post('', payload)
+  async getConfigs () {
+    return await this.post('', {
+      headers: {
+        Authorization: localStorage.getItem('token')
+      }
+    })
   }
 
   async createConfig (payload) {

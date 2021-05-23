@@ -36,6 +36,10 @@
       >
         {{ link.name }}
       </v-btn>
+
+      <v-spacer></v-spacer>
+
+      <auth-modal/>
     </v-app-bar>
 
     <v-main>
@@ -72,9 +76,13 @@
 </template>
 
 <script>
+import AuthModal from '@/components/AuthModal'
 
 export default {
   name: 'App',
+  components: {
+    AuthModal
+  },
   data: () => ({
     isAdmin: false,
     links: [

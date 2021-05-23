@@ -56,8 +56,8 @@
               There is nothing here yet.
             </v-expansion-panel-content>
             <v-expansion-panel-content
-              v-for="(component) in selectedList[item]"
-              :key="component"
+              v-for="(component, i) in selectedList[item]"
+              :key="i"
             >
               <v-card>
                 <v-card-text class="text--primary d-flex justify-space-around">
