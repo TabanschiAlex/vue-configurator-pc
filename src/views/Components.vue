@@ -1,13 +1,12 @@
 <template>
-  <div>dsf</div>
+  <catalog/>
 </template>
 
 <script>
+import Catalog from "@/components/Catalog";
+
 export default {
-  name: 'Components'
+  name: 'Components',
+  components: {Catalog}
 }
 </script>
-
-<style scoped>
-
-</style>

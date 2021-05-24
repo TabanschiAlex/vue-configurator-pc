@@ -1,10 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
+    <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -26,8 +22,8 @@
       </div>
 
       <v-btn
-        v-for="link in links"
-        :key="link"
+        v-for="(link, index) in links"
+        :key="index"
         color="white"
         text
         rounded
@@ -39,21 +35,15 @@
 
       <v-spacer></v-spacer>
 
-      <auth-modal/>
+      <auth-modal />
     </v-app-bar>
 
     <v-main>
-      <router-view/>
+      <router-view />
     </v-main>
 
-    <v-footer
-      color="primary lighten-1"
-      padless
-    >
-      <v-row
-        justify="center"
-        no-gutters
-      >
+    <v-footer color="primary lighten-1" padless>
+      <v-row justify="center" no-gutters>
         <v-btn
           v-if="isAdmin"
           color="white"
@@ -64,10 +54,7 @@
         >
           Admin panel
         </v-btn>
-        <v-col
-          class="primary lighten-2 py-4 text-center white--text"
-          cols="12"
-        >
+        <v-col class="primary lighten-2 py-4 text-center white--text" cols="12">
           {{ new Date().getFullYear() }} — <strong>PC Configurator</strong>
         </v-col>
       </v-row>
@@ -76,10 +63,10 @@
 </template>
 
 <script>
-import AuthModal from '@/components/AuthModal'
+import AuthModal from "@/components/AuthModal";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     AuthModal
   },
@@ -87,14 +74,14 @@ export default {
     isAdmin: false,
     links: [
       {
-        name: 'Home',
-        href: '/'
+        name: "Home",
+        href: "/"
       },
       {
-        name: 'Components',
-        href: '/components'
+        name: "Components",
+        href: "/components"
       }
     ]
   })
-}
+};
 </script>

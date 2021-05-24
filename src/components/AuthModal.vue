@@ -1,3 +1,66 @@
+<script>
+import { required, email, max } from 'vee-validate/dist/rules'
+import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+
+setInteractionMode('eager')
+
+extend('required', {
+  ...required,
+  message: '{_field_} can not be empty'
+})
+
+extend('max', {
+  ...max,
+  message: '{_field_} may not be greater than {length} characters'
+})
+
+extend('email', {
+  ...email,
+  message: 'Email must be valid'
+})
+
+export default {
+  name: 'AuthModal',
+  components: {
+    ValidationProvider,
+    ValidationObserver
+  },
+  data: () => ({
+    selectedAuth: 'login',
+    token: localStorage.getItem('token'),
+    dialog: false,
+    name: '',
+    email: '',
+    password: '',
+    items: [
+      'Item 1',
+      'Item 2',
+      'Item 3',
+      'Item 4'
+    ],
+    checkbox: null
+  }),
+  methods: {
+    submit () {
+      this.$refs.observer.validate()
+    },
+    async loginReq () {
+      console.log(this.password)
+      console.log(await this.$api.auth.login({ email: this.email, password: this.password }))
+      this.token = localStorage.getItem('token')
+      this.dialog = false
+    },
+    registerReq () {
+      this.$api.auth.register({ email: this.email, password: this.password, name: this.name })
+    },
+    logout () {
+      localStorage.clear()
+      this.token = undefined
+    }
+  }
+}
+</script>
+
 <template>
   <div>
     <v-dialog v-model="dialog" max-width="500" v-if="!token">
@@ -97,77 +160,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-btn
-      color="primary"
-      dark
-      v-if="token"
-      @click="logout"
-    >
-      Exit
-    </v-btn>
+    <div v-if="token">
+      <v-btn
+        color="primary"
+        dark
+        @click="logout"
+      >
+        Exit
+      </v-btn>
+    </div>
   </div>
 
 </template>
-
-<script>
-import { required, email, max } from 'vee-validate/dist/rules'
-import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
-
-setInteractionMode('eager')
-
-extend('required', {
-  ...required,
-  message: '{_field_} can not be empty'
-})
-
-extend('max', {
-  ...max,
-  message: '{_field_} may not be greater than {length} characters'
-})
-
-extend('email', {
-  ...email,
-  message: 'Email must be valid'
-})
-
-export default {
-  name: 'AuthModal',
-  components: {
-    ValidationProvider,
-    ValidationObserver
-  },
-  data: () => ({
-    selectedAuth: 'login',
-    token: localStorage.getItem('token'),
-    dialog: false,
-    name: '',
-    email: '',
-    password: '',
-    items: [
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4'
-    ],
-    checkbox: null
-  }),
-  methods: {
-    submit () {
-      this.$refs.observer.validate()
-    },
-    async loginReq () {
-      console.log(this.password)
-      console.log(await this.$api.auth.login({ email: this.email, password: this.password }))
-      this.token = localStorage.getItem('token')
-      this.dialog = false
-    },
-    registerReq () {
-      this.$api.auth.register({ a: 'a' })
-    },
-    logout () {
-      localStorage.clear()
-      this.token = undefined
-    }
-  }
-}
-</script>
