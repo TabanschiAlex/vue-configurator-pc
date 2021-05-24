@@ -137,6 +137,7 @@ export default {
           <v-btn
             color="blue darken-1"
             text
+            href="/"
             @click="loginReq"
             v-if="selectedAuth === 'login'"
           >
@@ -145,6 +146,7 @@ export default {
           <v-btn
             color="blue darken-1"
             text
+            href="/"
             @click="submit"
             v-if="selectedAuth === 'register'"
           >
@@ -164,6 +166,7 @@ export default {
       <v-btn
         color="primary"
         dark
+        href="/"
         @click="logout"
       >
         Exit

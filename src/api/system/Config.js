@@ -6,11 +6,11 @@ export default class Config extends APIModel {
   }
 
   async getConfigsList() {
-    return await this.get("");
+    return await this.get('');
   }
 
   async getConfigById(id) {
-    return await this.get(`/${id}`);
+    return await this.get(id);
   }
 
   async createConfig() {

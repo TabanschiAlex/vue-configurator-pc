@@ -14,9 +14,9 @@ export default class APIModel {
     )
   }
 
-  async get (url, params) {
+  async get (url) {
     try {
-      const response = await this.axios.get(this.resourceUrl + url, params)
+      const response = await this.axios.get(`${this.resourceUrl}/${url}`)
       return response.data
     } catch (e) {
       throw e.data

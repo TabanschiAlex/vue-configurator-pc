@@ -19,8 +19,9 @@ export default {
       selects: {
         configs: []
       },
-      selectedConfig: {},
-      compatible: false
+      selectedConfig: undefined,
+      compatible: false,
+      isLogIn: localStorage.getItem('isLogIn')
     };
   },
   methods: {
@@ -67,7 +68,7 @@ export default {
 
 <template>
   <v-container>
-    <v-row class="text-center">
+    <v-row class="text-center" v-if="isLogIn">
       <v-col cols="12" style="font-size: 28px">
         Configurator
       </v-col>
@@ -104,7 +105,7 @@ export default {
       </v-col>
 
       <v-col>
-        <div>
+        <div v-if="selectedConfig">
           <v-expansion-panels class="mb-6">
             <v-expansion-panel
               v-for="(item, index) in Object.keys(componentsExpansion)"
@@ -128,7 +129,6 @@ export default {
                       <img
                         :src="component.photo"
                         width="150"
-                        height="150"
                         alt=""
                       />
                     </div>
@@ -157,6 +157,7 @@ export default {
                 </v-card>
                 <br>
                 <v-btn
+                  href="/components"
                   color="blue"
                   text
                 >
@@ -166,6 +167,14 @@ export default {
             </v-expansion-panel>
           </v-expansion-panels>
         </div>
+        <div v-else>
+          Select config to configure
+        </div>
+      </v-col>
+    </v-row>
+    <v-row class="text-center" v-else>
+      <v-col cols="12" style="font-size: 20px">
+        Authorize to configure
       </v-col>
     </v-row>
   </v-container>

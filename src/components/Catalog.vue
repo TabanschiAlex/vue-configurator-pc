@@ -2,34 +2,34 @@
 export default {
   name: "Catalog",
   data: () => ({
+    selects: {
+      components: {}
+    },
     componentsExpansion: [
-      'CPU',
-      'Motherboard' ,
-      'GPU' ,
-      'RAM',
-      'ROM',
-      'PSU',
-      'Case',
-      'Monitor',
-      'Keyboard',
-      'Mouse'
+      ['CPU', 'cpu'],
+      ['Motherboard', 'motherboard'],
+      ['GPU', 'gpu'],
+      ['RAM', 'ram'],
+      ['ROM', 'rom'],
+      ['PSU', 'psu'],
+      ['Case', 'case'],
+      ['Monitor', 'monitor'],
+      ['Keyboard', 'keyboard'],
+      ['Mouse', 'mouse']
     ],
-    length: 15,
-    tab: null,
+    tab: undefined
   }),
   methods: {
     async loadData() {
       try {
-        this.selects.configs = await this.$api.config.getConfigsList();
+        this.selects.components = await this.$api.components.get('cpu');
       } catch (e) {
         console.log(e)
       }
-    }
-  },
-  watch: {
-    length (val) {
-      this.tab = val - 1
     },
+    async changeTab() {
+      console.log(this.selects.components = await this.$api.components.get(this.componentsExpansion[this.tab][1]));
+    }
   },
   async mounted() {
     await this.loadData();
@@ -47,20 +47,53 @@ export default {
       <v-col cols="12">
         <v-card>
           <v-tabs
-            width="100%"
-            v-model="tab"
             background-color="blue"
+            v-model="tab"
+            @change="changeTab"
             dark
           >
             <v-tab
-              v-for="n in componentsExpansion"
-              :key="n"
+              v-for="component in componentsExpansion"
+              :key="component[0]"
             >
-              {{ n }}
+              {{ component[0] }}
             </v-tab>
           </v-tabs>
           <v-card-text class="text-center">
-
+            <v-card v-for="(component, index) of this.selects.components"
+                    :key="index">
+              <v-card-text
+                class="text--primary d-flex justify-space-around"
+              >
+                <div>
+                  <img
+                    :src="component.photo"
+                    width="150"
+                    alt=""
+                  />
+                </div>
+                <div style="text-align: left">
+                  <p>{{ component.manufacturer }} {{ component.model }}</p>
+                  Category:
+                  <a href="#" class="text-muted" data-abc="true">
+                    {{ component[1] }}
+                  </a>
+                  <br />
+                  <p class="mb-3">{{ component.description }}</p>
+                </div>
+                <div>
+                  <h3 class="mb-0 font-weight-semibold">
+                    ${{ component.price }}
+                  </h3>
+                  <v-btn
+                    color="blue"
+                    dark
+                  >
+                    Select
+                  </v-btn>
+                </div>
+              </v-card-text>
+            </v-card>
           </v-card-text>
         </v-card>
       </v-col>
