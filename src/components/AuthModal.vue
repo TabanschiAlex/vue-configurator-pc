@@ -1,76 +1,75 @@
 <script>
-import { required, email, max } from 'vee-validate/dist/rules'
-import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+import { required, email, max } from "vee-validate/dist/rules";
+import {
+  extend,
+  ValidationObserver,
+  ValidationProvider,
+  setInteractionMode
+} from "vee-validate";
 
-setInteractionMode('eager')
+setInteractionMode("eager");
 
-extend('required', {
+extend("required", {
   ...required,
-  message: '{_field_} can not be empty'
-})
+  message: "{_field_} can not be empty"
+});
 
-extend('max', {
+extend("max", {
   ...max,
-  message: '{_field_} may not be greater than {length} characters'
-})
+  message: "{_field_} may not be greater than {length} characters"
+});
 
-extend('email', {
+extend("email", {
   ...email,
-  message: 'Email must be valid'
-})
+  message: "Email must be valid"
+});
 
 export default {
-  name: 'AuthModal',
+  name: "AuthModal",
   components: {
     ValidationProvider,
     ValidationObserver
   },
   data: () => ({
-    selectedAuth: 'login',
-    token: localStorage.getItem('token'),
+    selectedAuth: "login",
     dialog: false,
-    name: '',
-    email: '',
-    password: '',
-    items: [
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4'
-    ],
-    checkbox: null
+    name: "",
+    email: "",
+    password: ""
   }),
   methods: {
-    submit () {
-      this.$refs.observer.validate()
+    async loginReq() {
+      await this.$store.dispatch('makeLoginRequest', {
+        email: this.email,
+        password: this.password
+      });
+      this.dialog = false;
     },
-    async loginReq () {
-      console.log(this.password)
-      console.log(await this.$api.auth.login({ email: this.email, password: this.password }))
-      this.token = localStorage.getItem('token')
-      this.dialog = false
+    async registerReq() {
+      await this.$store.dispatch('makeRegisterRequest', {
+        email: this.email,
+        password: this.password,
+        name: this.name
+      });
+      this.dialog = false;
     },
-    registerReq () {
-      this.$api.auth.register({ email: this.email, password: this.password, name: this.name })
-    },
-    logout () {
-      localStorage.clear()
-      this.token = undefined
+    logout() {
+      this.$store.dispatch('logout');
+    }
+  },
+  computed: {
+    token() {
+      return this.$store.getters.getToken;
     }
   }
-}
+};
 </script>
 
 <template>
   <div>
     <v-dialog v-model="dialog" max-width="500" v-if="!token">
-      <template v-slot:activator="{ on, attrs }" >
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn color="primary" dark v-bind="attrs" v-on="on">
           Authorization
         </v-btn>
       </template>
@@ -83,7 +82,11 @@ export default {
         <v-card-text>
           <ValidationObserver ref="observer" v-if="selectedAuth === 'login'">
             <form>
-              <ValidationProvider v-slot="{ errors }" name="email" rules="required|email">
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="email"
+                rules="required|email"
+              >
                 <v-text-field
                   v-model="email"
                   :error-messages="errors"
@@ -91,7 +94,12 @@ export default {
                   required
                 ></v-text-field>
               </ValidationProvider>
-              <ValidationProvider v-slot="{ errors }" name="password" rules="required">
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="password"
+                type="password"
+                rules="required"
+              >
                 <v-text-field
                   v-model="password"
                   :error-messages="errors"
@@ -104,7 +112,11 @@ export default {
 
           <ValidationObserver ref="observer" v-if="selectedAuth === 'register'">
             <form>
-              <ValidationProvider v-slot="{ errors }" name="Name" rules="required|max:25">
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="name"
+                rules="required|max:25"
+              >
                 <v-text-field
                   v-model="name"
                   :counter="25"
@@ -113,7 +125,11 @@ export default {
                   required
                 ></v-text-field>
               </ValidationProvider>
-              <ValidationProvider v-slot="{ errors }" name="email" rules="required|email">
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="email"
+                rules="required|email"
+              >
                 <v-text-field
                   v-model="email"
                   :error-messages="errors"
@@ -121,7 +137,12 @@ export default {
                   required
                 ></v-text-field>
               </ValidationProvider>
-              <ValidationProvider v-slot="{ errors }" name="password" rules="required">
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="password"
+                type="password"
+                rules="required"
+              >
                 <v-text-field
                   v-model="password"
                   :error-messages="errors"
@@ -137,7 +158,6 @@ export default {
           <v-btn
             color="blue darken-1"
             text
-            href="/"
             @click="loginReq"
             v-if="selectedAuth === 'login'"
           >
@@ -146,32 +166,21 @@ export default {
           <v-btn
             color="blue darken-1"
             text
-            href="/"
-            @click="submit"
+            @click="registerReq"
             v-if="selectedAuth === 'register'"
           >
             Register
           </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
+          <v-btn color="blue darken-1" text @click="dialog = false">
             Close
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
     <div v-if="token">
-      <v-btn
-        color="primary"
-        dark
-        href="/"
-        @click="logout"
-      >
+      <v-btn color="primary" dark @click="logout">
         Exit
       </v-btn>
     </div>
   </div>
-
 </template>

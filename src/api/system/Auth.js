@@ -7,17 +7,7 @@ export default class Auth extends APIModel {
 
   async login (payload) {
     try {
-      const response = await this.post('/login', payload)
-
-      if (response.status === 401 || response.status === 422) {
-        return localStorage.clear()
-      }
-
-      localStorage.setItem('username', response.username)
-      localStorage.setItem('isLogIn', 'true')
-      localStorage.setItem('token', response.token)
-
-      return true
+      return await this.post('/login', payload);
     } catch (e) {
       localStorage.clear()
       console.log(e)

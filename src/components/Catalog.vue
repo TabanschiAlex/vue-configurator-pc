@@ -33,6 +33,7 @@ export default {
   },
   async mounted() {
     await this.loadData();
+    console.log(await this.$store.getters.getSelectedConfig);
   }
 }
 </script>

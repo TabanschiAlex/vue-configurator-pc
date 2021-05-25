@@ -16,9 +16,7 @@ export default {
         Mouse: "mouse"
       },
       configId: undefined,
-      selectedConfig: {},
       compatible: false,
-      isLogIn: localStorage.getItem("isLogIn")
     };
   },
   methods: {
@@ -26,9 +24,9 @@ export default {
       console.log(component);
       component = [];
     },
-    /*async createConfig() {
-      this.selects.configs = await this.$api.config.createConfig();
-    },*/
+    async createConfig() {
+      await this.$store.dispatch("createConfig");
+    },
     async changeConfig() {
       await this.$store.dispatch("loadSelectedConfig", this.configId);
     }
@@ -41,7 +39,10 @@ export default {
       return this.$store.getters.getSelectedConfig;
     },
     calcPrice() {
-      return this.selectedConfig["total_price"];
+      return this.loadSelectedConfig["total_price"];
+    },
+    token() {
+      return this.$store.getters.getToken;
     }
   },
   async mounted() {
@@ -52,7 +53,7 @@ export default {
 
 <template>
   <v-container>
-    <v-row class="text-center" v-if="isLogIn">
+    <v-row class="text-center" v-if="token">
       <v-col cols="12" style="font-size: 28px">
         Configurator
       </v-col>
@@ -70,7 +71,7 @@ export default {
         >
         </v-select>
 
-        <v-btn width="100%">
+        <v-btn width="100%" @click="createConfig">
           Add Config
         </v-btn>
 
@@ -133,7 +134,7 @@ export default {
                       <v-btn
                         @click="
                           deleteComponent(
-                            selectedConfig[componentsExpansion[item]]
+                            loadSelectedConfig[componentsExpansion[item]]
                           )
                         "
                         color="red"

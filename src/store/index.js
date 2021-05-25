@@ -7,7 +7,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     configList: [],
-    selectedConfig: {}
+    selectedConfig: {},
+    token: localStorage.getItem('token')
   },
   mutations: {
     updateConfigList(state, payload) {
@@ -33,6 +34,16 @@ export default new Vuex.Store({
       }
 
       state.selectedConfig = payload;
+    },
+    updateAuthorization(state, payload) {
+      if (!payload || payload.status === 401 || payload.status === 422) {
+        localStorage.clear();
+        return state.token = undefined;
+      }
+
+      localStorage.setItem('token', payload.token);
+      localStorage.setItem('username', payload.username);
+      return state.token = payload.token;
     }
   },
   actions: {
@@ -48,9 +59,38 @@ export default new Vuex.Store({
       try {
         const response = await api.config.getConfigById(id);
         context.commit("updateSelectedConfig", response);
+        console.log(response)
       } catch (e) {
         console.log(e);
       }
+    },
+    async createConfig(context) {
+      try {
+        const response = await api.config.createConfig();
+        context.commit("updateConfigList", response);
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async makeLoginRequest(context, payload) {
+      try {
+        console.log(payload)
+        const response = await api.auth.login(payload);
+        context.commit("updateAuthorization", response);
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async makeRegisterRequest(context, payload) {
+      try {
+        const response = await api.auth.register(payload);
+        context.commit("updateAuthorization", response);
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async logout(context) {
+      context.commit("updateAuthorization", '');
     }
   },
   getters: {
@@ -59,6 +99,9 @@ export default new Vuex.Store({
     },
     getSelectedConfig(state) {
       return state.selectedConfig;
+    },
+    getToken(state) {
+      return state.token;
     }
   }
 });
