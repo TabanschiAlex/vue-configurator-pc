@@ -9,22 +9,15 @@ export default class Auth extends APIModel {
     try {
       return await this.post('/login', payload);
     } catch (e) {
-      localStorage.clear()
-      console.log(e)
+      console.log(e);
     }
   }
 
   async register (payload) {
-    const response = await this.post('/register', payload)
-
-    if (response.status === 401) {
-      return localStorage.clear()
+    try {
+      return await this.post('/register', payload);
+    } catch (e) {
+      console.log(e);
     }
-
-    localStorage.setItem('username', response.username)
-    localStorage.setItem('isLogIn', 'true')
-    localStorage.setItem('token', response.token)
-
-    return true
   }
 }

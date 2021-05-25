@@ -16,7 +16,7 @@ export default {
         Mouse: "mouse"
       },
       configId: undefined,
-      compatible: false,
+      compatible: false
     };
   },
   methods: {
@@ -78,7 +78,7 @@ export default {
         <br />
         <br />
 
-        <v-alert v-if="compatible === 'true'" text type="success">
+        <v-alert v-if="compatible" text type="success">
           All right, all components compatible!
         </v-alert>
         <v-alert v-else-if="!compatible" text type="error">
@@ -109,7 +109,9 @@ export default {
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-card
-                  v-for="(component, index) of loadSelectedConfig[componentsExpansion[item]]"
+                  v-for="(component, index) of loadSelectedConfig[
+                    componentsExpansion[item]
+                  ]"
                   :key="`index_${index}`"
                 >
                   <v-card-text

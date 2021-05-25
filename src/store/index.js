@@ -58,8 +58,8 @@ export default new Vuex.Store({
     async loadSelectedConfig(context, id) {
       try {
         const response = await api.config.getConfigById(id);
+        localStorage.setItem('configId', id);
         context.commit("updateSelectedConfig", response);
-        console.log(response)
       } catch (e) {
         console.log(e);
       }
@@ -74,7 +74,6 @@ export default new Vuex.Store({
     },
     async makeLoginRequest(context, payload) {
       try {
-        console.log(payload)
         const response = await api.auth.login(payload);
         context.commit("updateAuthorization", response);
       } catch (e) {
