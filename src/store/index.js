@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     configList: [],
     selectedConfig: {},
+    componentList: [],
     token: localStorage.getItem('token')
   },
   mutations: {
@@ -44,9 +45,20 @@ export default new Vuex.Store({
       localStorage.setItem('token', payload.token);
       localStorage.setItem('username', payload.username);
       return state.token = payload.token;
+    },
+    updateComponentList(state, payload) {
+      state.componentList = payload;
     }
   },
   actions: {
+    async loadComponentList(context, elem) {
+      try {
+        const response = await api.components.get(elem);
+        context.commit("updateComponentList", response);
+      } catch (e) {
+        console.log(e)
+      }
+    },
     async loadConfigList(context) {
       try {
         const response = await api.config.getConfigsList();
@@ -101,6 +113,9 @@ export default new Vuex.Store({
     },
     getToken(state) {
       return state.token;
+    },
+    getComponentList(state) {
+      return state.componentList;
     }
   }
 });

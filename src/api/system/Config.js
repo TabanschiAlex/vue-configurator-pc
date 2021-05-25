@@ -15,11 +15,7 @@ export default class Config extends APIModel {
 
   async createConfig() {
     try {
-      return await this.post("", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token")
-        }
-      });
+      return await this.post("");
     } catch (e) {
       console.log(e);
     }

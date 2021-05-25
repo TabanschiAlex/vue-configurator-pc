@@ -17,23 +17,28 @@ export default {
       ['Keyboard', 'keyboard'],
       ['Mouse', 'mouse']
     ],
-    tab: undefined
+    tab: undefined,
+    category: undefined
   }),
   methods: {
-    async loadData() {
-      try {
-        this.selects.components = await this.$api.components.get('cpu');
-      } catch (e) {
-        console.log(e)
-      }
-    },
     async changeTab() {
-      console.log(this.selects.components = await this.$api.components.get(this.componentsExpansion[this.tab][1]));
+      await this.$store.dispatch("loadComponentList", this.componentsExpansion[this.tab][1]);
+      this.category = this.componentsExpansion[this.tab][1];
+    },
+    async addToConfig(id) {
+      return await this.$api.config.addComponent(
+        {
+          id: localStorage.getItem('configId'),
+          category: this.category,
+          component: id
+        });
     }
   },
-  async mounted() {
-    await this.loadData();
-    console.log(await this.$store.getters.getSelectedConfig);
+  computed: {
+    components() {
+      console.log(this.$store.getters.getComponentList)
+      return this.$store.getters.getComponentList;
+    }
   }
 }
 </script>
@@ -61,7 +66,7 @@ export default {
             </v-tab>
           </v-tabs>
           <v-card-text class="text-center">
-            <v-card v-for="(component, index) of this.selects.components"
+            <v-card v-for="(component, index) of components"
                     :key="index">
               <v-card-text
                 class="text--primary d-flex justify-space-around"
@@ -77,7 +82,7 @@ export default {
                   <p>{{ component.manufacturer }} {{ component.model }}</p>
                   Category:
                   <a href="#" class="text-muted" data-abc="true">
-                    {{ component[1] }}
+                    {{ category }}
                   </a>
                   <br />
                   <p class="mb-3">{{ component.description }}</p>
@@ -89,6 +94,8 @@ export default {
                   <v-btn
                     color="blue"
                     dark
+                    href="/"
+                    @click="addToConfig(component.id)"
                   >
                     Select
                   </v-btn>

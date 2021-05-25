@@ -36,6 +36,7 @@ export default {
       return this.$store.getters.getConfigList;
     },
     loadSelectedConfig() {
+      console.log(this.$store.getters.getSelectedConfig)
       return this.$store.getters.getSelectedConfig;
     },
     calcPrice() {
