@@ -1,61 +1,61 @@
-import axios from 'axios'
+import axios from "axios";
 
 export default class APIModel {
-  constructor (resourceUrl = '') {
-    this.resourceUrl = resourceUrl
-    this.axios = axios.create(
-      {
-        baseURL: 'http://localhost/',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+  constructor(resourceUrl = "") {
+    this.resourceUrl = resourceUrl;
+    this.axios = axios.create({
+      baseURL: "http://localhost/",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       }
-    )
+    });
   }
 
-  async get (url) {
+  async get(url) {
     try {
-      const response = await this.axios.get(`${this.resourceUrl}/${url}`)
-      return response.data
+      const response = await this.axios.get(`${this.resourceUrl}/${url}`);
+      return response.data;
     } catch (e) {
-      throw e.data
+      throw e.data;
     }
   }
 
-  async post (url, data) {
+  async post(url, data) {
     try {
-      const response = await this.axios.post(this.resourceUrl + url, data)
-      return response.data
+      const response = await this.axios.post(this.resourceUrl + url, data);
+      return response.data;
     } catch (e) {
-      throw e.data
+      throw e.data;
     }
   }
 
-  async patch (url, data) {
+  async patch(url, data) {
     try {
-      const response = await this.axios.patch(this.resourceUrl + url, data)
-      return response.data
+      const response = await this.axios.patch(this.resourceUrl + url, data);
+      return response.data;
     } catch (e) {
-      throw e.data
+      throw e.data;
     }
   }
 
-  async put (url, data) {
+  async put(url, data) {
     try {
-      const response = await this.axios.put(this.resourceUrl + url, data)
-      return response.data
+      const response = await this.axios.put(this.resourceUrl + url, data);
+      return response.data;
     } catch (e) {
-      throw e.data
+      throw e.data;
     }
   }
 
-  async delete (url, data) {
+  async delete(url, data) {
     try {
-      const response = await this.axios.delete(this.resourceUrl + url, { data })
-      return response.data
+      const response = await this.axios.delete(this.resourceUrl + url, {
+        data
+      });
+      return response.data;
     } catch (e) {
-      throw e.data
+      throw e.data;
     }
   }
 }

@@ -4,64 +4,48 @@ export default {
   data() {
     return {
       componentsExpansion: {
-        CPU: 'cpu_config',
-        Motherboard: 'motherboard',
-        GPU: 'gpu_config',
-        RAM: 'ram_config',
-        ROM: 'rom_config',
-        PSU: 'psu',
-        Case: 'case',
-        Monitor: 'monitor',
-        Keyboard: 'keyboard',
-        Mouse: 'mouse'
+        CPU: "cpu_config",
+        Motherboard: "motherboard",
+        GPU: "gpu_config",
+        RAM: "ram_config",
+        ROM: "rom_config",
+        PSU: "psu",
+        Case: "case",
+        Monitor: "monitor",
+        Keyboard: "keyboard",
+        Mouse: "mouse"
       },
       configId: undefined,
-      selects: {
-        configs: []
-      },
-      selectedConfig: undefined,
+      selectedConfig: {},
       compatible: false,
-      isLogIn: localStorage.getItem('isLogIn')
+      isLogIn: localStorage.getItem("isLogIn")
     };
   },
   methods: {
     deleteComponent(component) {
-      console.log(component)
+      console.log(component);
       component = [];
     },
-    async createConfig() {
+    /*async createConfig() {
       this.selects.configs = await this.$api.config.createConfig();
-    },
+    },*/
     async changeConfig() {
-      try {
-        const elementsName = ['case', 'mouse', 'keyboard', 'monitor', 'motherboard', 'psu'];
-        const config = await this.$api.config.getConfigById(this.configId);
-
-        for (const elem of elementsName) {
-          if (config[elem] == null) {
-            config[elem] = [];
-            continue;
-          }
-
-          config[elem] = [config[elem]];
-        }
-
-        console.log(config)
-        this.selectedConfig = config;
-      } catch (e) {
-        console.log(e)
-      }
+      await this.$store.dispatch("loadSelectedConfig", this.configId);
+    }
+  },
+  computed: {
+    loadConfigList() {
+      return this.$store.getters.getConfigList;
     },
-    async loadData() {
-      try {
-        this.selects.configs = await this.$api.config.getConfigsList();
-      } catch (e) {
-        console.log(e)
-      }
+    loadSelectedConfig() {
+      return this.$store.getters.getSelectedConfig;
+    },
+    calcPrice() {
+      return this.selectedConfig["total_price"];
     }
   },
   async mounted() {
-    await this.loadData();
+    await this.$store.dispatch("loadConfigList");
   }
 };
 </script>
@@ -75,7 +59,7 @@ export default {
 
       <v-col cols="12" md="4" lg="3">
         <v-select
-          :items="selects.configs"
+          :items="loadConfigList"
           item-text="id"
           item-value="id"
           v-model="configId"
@@ -86,7 +70,7 @@ export default {
         >
         </v-select>
 
-        <v-btn width="100%" @click="createConfig">
+        <v-btn width="100%">
           Add Config
         </v-btn>
 
@@ -102,10 +86,13 @@ export default {
         <v-alert v-else text type="warning">
           Not enough components for PC.
         </v-alert>
+
+        Total price:
+        <v-text-field disabled :value="calcPrice"> </v-text-field>
       </v-col>
 
       <v-col>
-        <div v-if="selectedConfig">
+        <div v-if="Object.keys(loadSelectedConfig).length">
           <v-expansion-panels class="mb-6">
             <v-expansion-panel
               v-for="(item, index) in Object.keys(componentsExpansion)"
@@ -120,17 +107,15 @@ export default {
                 </template>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-card v-for="(component, index) of selectedConfig[componentsExpansion[item]]"
-                        :key="`index_${index}`">
+                <v-card
+                  v-for="(component, index) of loadSelectedConfig[componentsExpansion[item]]"
+                  :key="`index_${index}`"
+                >
                   <v-card-text
                     class="text--primary d-flex justify-space-around"
                   >
                     <div>
-                      <img
-                        :src="component.photo"
-                        width="150"
-                        alt=""
-                      />
+                      <img :src="component.photo" width="150" alt="" />
                     </div>
                     <div style="text-align: left">
                       <p>{{ component.manufacturer }} {{ component.model }}</p>
@@ -146,7 +131,11 @@ export default {
                         ${{ component.price }}
                       </h3>
                       <v-btn
-                        @click="deleteComponent(selectedConfig[componentsExpansion[item]])"
+                        @click="
+                          deleteComponent(
+                            selectedConfig[componentsExpansion[item]]
+                          )
+                        "
                         color="red"
                         text
                       >
@@ -155,12 +144,8 @@ export default {
                     </div>
                   </v-card-text>
                 </v-card>
-                <br>
-                <v-btn
-                  href="/components"
-                  color="blue"
-                  text
-                >
+                <br />
+                <v-btn href="/components" color="blue" text>
                   Select {{ item }}
                 </v-btn>
               </v-expansion-panel-content>
